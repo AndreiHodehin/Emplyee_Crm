@@ -29,14 +29,12 @@ public class Employee {
     private EmployeeDetail employeeDetail;
     @Embedded
     private EmployeePersonalInfo personalInfo;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-    @JsonBackReference
     private Department department;
 
 
     @ManyToMany(mappedBy = "employees",fetch = FetchType.LAZY)
-    @JsonIgnore
     @Setter(AccessLevel.PRIVATE)
     private List<Task> tasks = new ArrayList<>();
 

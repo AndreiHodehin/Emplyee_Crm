@@ -1,6 +1,6 @@
 package com.hodehin.employeeapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -9,7 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 
 @Entity
 @Data
@@ -31,7 +31,6 @@ public class Task {
     @JoinTable(name = "employee_task",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id"))
-    @JsonIgnore
     private List<Employee> employees = new ArrayList<>();
 
 

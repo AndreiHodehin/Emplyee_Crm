@@ -1,11 +1,12 @@
 package com.hodehin.employeeapp.service;
 
+import com.hodehin.employeeapp.dto.DepartmentDto;
 import com.hodehin.employeeapp.model.Department;
 
 import java.util.List;
 
 public interface DepartmentService {
-    Department addDepartment(Department departmentReq);
+    void addDepartment(Department departmentReq);
 
     Department getDepartmentById(Long id);
 

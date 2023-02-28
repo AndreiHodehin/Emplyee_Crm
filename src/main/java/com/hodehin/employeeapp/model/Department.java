@@ -23,7 +23,6 @@ public class Department {
     private String location;
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
-    @JsonManagedReference
     private List<Employee> employees;
 
     public void addEmployee(Employee employee) {

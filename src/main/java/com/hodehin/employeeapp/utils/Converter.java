@@ -1,46 +1,44 @@
 package com.hodehin.employeeapp.utils;
 
-import com.hodehin.employeeapp.dto.EmployeeDTO;
+import com.hodehin.employeeapp.dto.DepartmentDto;
+import com.hodehin.employeeapp.dto.EmployeeDto;
 import com.hodehin.employeeapp.dto.TaskDto;
+import com.hodehin.employeeapp.model.Department;
 import com.hodehin.employeeapp.model.Employee;
 import com.hodehin.employeeapp.model.Task;
 import com.hodehin.employeeapp.model.embedded.EmployeeDetail;
 import com.hodehin.employeeapp.model.embedded.EmployeePersonalInfo;
-import com.hodehin.employeeapp.service.EmployeeService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@AllArgsConstructor
+
 @Component
 public class Converter {
-    private final  EmployeeService employeeService;
 
-    public EmployeeDTO employeeToDto(Employee employee) {
-        return new EmployeeDTO(employee.getId()
+    public EmployeeDto employeeToDto(Employee employee) {
+        return new EmployeeDto(employee.getId()
                 , employee.getFirstName()
                 , employee.getLastName()
-                , employee.getPersonalInfo().getBirthDate()
-                , employee.getPersonalInfo().getAddress()
-                , employee.getPersonalInfo().getPhoneNumber()
-                , employee.getEmployeeDetail().getHired()
-                , employee.getEmployeeDetail().getSalary()
+                , employee.getDepartment() == null ? null : employee.getDepartment().getName().name()
+                , employee.getPersonalInfo() == null ? null : employee.getPersonalInfo().getBirthDate()
+                , employee.getPersonalInfo() == null ? null : employee.getPersonalInfo().getAddress()
+                , employee.getPersonalInfo() == null ? null : employee.getPersonalInfo().getPhoneNumber()
+                , employee.getEmployeeDetail() == null ? null : employee.getEmployeeDetail().getHired()
+                , employee.getEmployeeDetail() == null ? 0 : employee.getEmployeeDetail().getSalary()
                 , employee.getTasks().stream().map(this::taskToDto).toList());
     }
-    public Employee employeeToEntity(EmployeeDTO employeeDTO) {
+    public Employee employeeToEntity(EmployeeDto employeeDTO) {
         Employee employee = new Employee();
         employee.setFirstName(employeeDTO.getFirstName());
         employee.setLastName(employee.getLastName());
         EmployeePersonalInfo personalInfo = new EmployeePersonalInfo(employeeDTO.getBirthDate()
-                                                                        ,employee.getPersonalInfo().getAddress()
-                                                                        ,employee.getPersonalInfo().getPhoneNumber());
+                                                                        , employeeDTO.getAddress()
+                                                                        ,employeeDTO.getPhoneNumber());
         employee.setPersonalInfo(personalInfo);
         EmployeeDetail detail = new EmployeeDetail(employeeDTO.getHired(), employeeDTO.getSalary());
         employee.setEmployeeDetail(detail);
 
-        employee.getTasks().addAll(employeeDTO.getTasks().stream().map(this::taskToEntity).toList());
-        System.out.println(employee);
         return employee;
     }
     public TaskDto taskToDto(Task task) {
@@ -58,9 +56,20 @@ public class Converter {
         task.setEstimate(taskDto.getEstimate());
         task.setStartTime(taskDto.getStartTime());
         task.setCompleted(taskDto.getCompleted());
-        List<Employee> employees = taskDto.getEmployees().stream().map(employeeService::getEmployee).toList();
-        employees.forEach(task::addEmployee);
-        System.out.println(task);
         return task;
+    }
+
+    public DepartmentDto departmentToDto(Department department) {
+        return new DepartmentDto(department.getId()
+                                , department.getName()
+                                , department.getLocation()
+                                , department.getEmployees().stream().map(Employee::getId).toList());
+    }
+
+    public Department departmentToEntity(DepartmentDto departmentDto) {
+        Department department = new Department();
+        department.setLocation(departmentDto.getLocation());
+        department.setName(departmentDto.getName());
+        return department;
     }
 }

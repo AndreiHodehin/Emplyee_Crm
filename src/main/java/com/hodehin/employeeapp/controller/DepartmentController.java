@@ -1,9 +1,10 @@
 package com.hodehin.employeeapp.controller;
 
+import com.hodehin.employeeapp.dto.DepartmentDto;
 import com.hodehin.employeeapp.model.Department;
 import com.hodehin.employeeapp.service.DepartmentService;
+import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,32 +16,38 @@ import java.util.List;
 @AllArgsConstructor
 public class DepartmentController {
 
-    private DepartmentService service;
+    private final DepartmentService service;
+    private final Converter converter;
 
     @PostMapping
-    public ResponseEntity<Department> createDepartment(@RequestBody Department departmentReq) {
-        Department department = service.addDepartment(departmentReq);
-        return ResponseEntity.ok(department);
+    public ResponseEntity<Object> createDepartment(@RequestBody DepartmentDto departmentDto) {
+         Department departmentReq = converter.departmentToEntity(departmentDto);
+         service.addDepartment(departmentReq);
+        return ResponseEntity.ok(null);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Department> getDepartmentById(@PathVariable Long id) {
+    public ResponseEntity<DepartmentDto> getDepartmentById(@PathVariable Long id) {
         Department department = service.getDepartmentById(id);
-        return ResponseEntity.ok(department);
+        DepartmentDto dto = converter.departmentToDto(department);
+        return ResponseEntity.ok(dto);
     }
     @GetMapping()
-    public ResponseEntity<List<Department>> getAllDepartment() {
+    public ResponseEntity<List<DepartmentDto>> getAllDepartment() {
         List<Department> departments = service.getAllDepartment();
-        return ResponseEntity.ok(departments);
+        List<DepartmentDto> dtos = departments.stream().map(converter::departmentToDto).toList();
+        return ResponseEntity.ok(dtos);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Department> updateDepartment(@RequestBody Department department,
+    public ResponseEntity<DepartmentDto> updateDepartment(@RequestBody DepartmentDto departmentDto,
                                                        @PathVariable Long id){
+        Department department = converter.departmentToEntity(departmentDto);
         Department updated = service.updateDepartment(id,department);
-        return ResponseEntity.ok(updated);
+        DepartmentDto dto = converter.departmentToDto(updated);
+        return ResponseEntity.ok(dto);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteDepartment(@PathVariable Long id) {
+    public ResponseEntity<String> deleteDepartment(@PathVariable Long id) {
         service.deleteDepartmentById(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok("Deleted successful");
     }
 }

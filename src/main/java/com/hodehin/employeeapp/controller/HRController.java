@@ -1,6 +1,8 @@
 package com.hodehin.employeeapp.controller;
 
 
+import com.hodehin.employeeapp.dto.EmployeeDto;
+import com.hodehin.employeeapp.dto.HireInfoDto;
 import com.hodehin.employeeapp.model.Employee;
 import com.hodehin.employeeapp.model.embedded.EmployeeDetail;
 import com.hodehin.employeeapp.service.HumanResourcesService;
@@ -16,14 +18,14 @@ public class HRController {
     private HumanResourcesService humanResourcesService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> hireEmployee(@PathVariable long id, @RequestBody EmployeeDetail detail) {
-        Employee employee = humanResourcesService.hireEmployee(id, detail);
+    public ResponseEntity<EmployeeDto> hireEmployee(@PathVariable long id, @RequestBody HireInfoDto hireInfo) {
+        EmployeeDto employee = humanResourcesService.hireEmployee(id, hireInfo);
         return ResponseEntity.ok(employee);
     }
 
     @PutMapping("/{id}/suspend")
-    public ResponseEntity<Employee> suspendEmployee(@PathVariable long id) {
-        Employee employee = humanResourcesService.suspendEmployee(id);
+    public ResponseEntity<EmployeeDto> suspendEmployee(@PathVariable long id) {
+        EmployeeDto employee = humanResourcesService.suspendEmployee(id);
         return ResponseEntity.ok(employee);
     }
 }

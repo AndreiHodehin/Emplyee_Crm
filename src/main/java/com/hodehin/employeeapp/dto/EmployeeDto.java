@@ -1,8 +1,5 @@
 package com.hodehin.employeeapp.dto;
 
-import com.hodehin.employeeapp.enums.Departments;
-import com.hodehin.employeeapp.model.Department;
-import com.hodehin.employeeapp.model.Task;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,11 +12,12 @@ import java.util.List;
 @EqualsAndHashCode(of = {"firstName", "lastName"})
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeDTO {
+public class EmployeeDto {
 
     private Long id;
     private String firstName;
     private String lastName;
+    private String department;
     private LocalDate birthDate;
     private String address;
     private String phoneNumber;

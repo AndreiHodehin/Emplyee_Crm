@@ -1,12 +1,16 @@
 package com.hodehin.employeeapp.service.impl;
 
+import com.hodehin.employeeapp.dto.TaskDto;
+import com.hodehin.employeeapp.exception.EmployeeDoThisTaskException;
 import com.hodehin.employeeapp.exception.EmployeeNotFoundException;
+import com.hodehin.employeeapp.exception.EmployeeNotHiredException;
 import com.hodehin.employeeapp.exception.TaskNotFoundException;
 import com.hodehin.employeeapp.model.Employee;
 import com.hodehin.employeeapp.model.Task;
 import com.hodehin.employeeapp.repositiry.EmployeeRepository;
 import com.hodehin.employeeapp.repositiry.TaskRepository;
 import com.hodehin.employeeapp.service.TaskService;
+import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,20 +22,22 @@ public class TaskServiceImpl implements TaskService {
 
     private TaskRepository repository;
     private EmployeeRepository employeeRepository;
+    private Converter converter;
 
     @Override
-    public Task getById(Long id) {
-        return repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
+    public TaskDto getById(Long id) {
+        Task task = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
+        return converter.taskToDto(task);
     }
 
     @Override
-    public List<Task> getAll() {
-        return repository.findAll();
+    public List<TaskDto> getAll() {
+        return repository.findAll().stream().map(task -> converter.taskToDto(task)).toList();
     }
 
     @Override
-    public Task createTask(Task task) {
-        return repository.save(task);
+    public void createTask(Task task) {
+        repository.save(task);
     }
 
     @Override
@@ -40,7 +46,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task updateTask(Long id, Task newTask) {
+    public TaskDto updateTask(Long id, Task newTask) {
         Task current = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
         if(newTask.getCompleted() != null) {
             current.setCompleted(newTask.getCompleted());
@@ -57,19 +63,22 @@ public class TaskServiceImpl implements TaskService {
         if(newTask.getEmployees() != null) {
             current.getEmployees().addAll(newTask.getEmployees());
         }
-//        repository.flush();
-        return current;
+        return converter.taskToDto(current);
     }
 
     @Override
-    public Task setEmplToTask(Long id, Long employeeId) {
-        System.out.println("in set method");
+    public TaskDto setEmplToTask(Long id, Long employeeId) {
+
         Task task = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee not present in DB"));
-        System.out.println(task);
-        System.out.println(employee);
+        if(employee.getEmployeeDetail() == null) {
+            throw new EmployeeNotHiredException("Employee not hired");
+        }
+        if(task.getEmployees().contains(employee)){
+            throw new EmployeeDoThisTaskException("Employee already setted on this task");
+        }
         task.getEmployees().add(employee);
         repository.save(task);
-        return task;
+        return converter.taskToDto(task);
     }
 }

@@ -1,9 +1,11 @@
 package com.hodehin.employeeapp.service.impl;
 
+import com.hodehin.employeeapp.dto.DepartmentDto;
 import com.hodehin.employeeapp.exception.DepartmentNotFoundException;
 import com.hodehin.employeeapp.model.Department;
 import com.hodehin.employeeapp.repositiry.DepartmentRepository;
 import com.hodehin.employeeapp.service.DepartmentService;
+import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository repository;
     @Override
-    public Department addDepartment(Department departmentReq) {
+    public void addDepartment(Department departmentReq) {
         repository.save(departmentReq);
-        return departmentReq;
     }
 
     @Override
