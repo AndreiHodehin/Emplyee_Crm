@@ -10,7 +10,6 @@ import com.hodehin.employeeapp.model.embedded.EmployeeDetail;
 import com.hodehin.employeeapp.model.embedded.EmployeePersonalInfo;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 
 @Component
@@ -31,10 +30,11 @@ public class Converter {
     public Employee employeeToEntity(EmployeeDto employeeDTO) {
         Employee employee = new Employee();
         employee.setFirstName(employeeDTO.getFirstName());
-        employee.setLastName(employee.getLastName());
+        employee.setLastName(employeeDTO.getLastName());
         EmployeePersonalInfo personalInfo = new EmployeePersonalInfo(employeeDTO.getBirthDate()
                                                                         , employeeDTO.getAddress()
                                                                         ,employeeDTO.getPhoneNumber());
+        System.out.println(personalInfo);
         employee.setPersonalInfo(personalInfo);
         EmployeeDetail detail = new EmployeeDetail(employeeDTO.getHired(), employeeDTO.getSalary());
         employee.setEmployeeDetail(detail);

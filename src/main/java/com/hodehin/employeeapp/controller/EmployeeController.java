@@ -25,10 +25,10 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody EmployeeDto employeeDto) {
         Employee employee = converter.employeeToEntity(employeeDto);
         employeeService.addEmployee(employee);
-        return ResponseEntity.ok(employee);
+        return ResponseEntity.ok(employeeDto);
     }
 
 

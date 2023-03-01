@@ -32,6 +32,9 @@ public class HumanResourcesServiceImpl implements HumanResourcesService {
             EmployeeDetail detail = new EmployeeDetail(LocalDate.now(),hireInfo.getSalary());
             employee.setEmployeeDetail(detail);
         } else {
+            if(employee.getEmployeeDetail().getHired() == null) {
+                employee.getEmployeeDetail().setHired(LocalDate.now());
+            }
             double currentSalary = employee.getEmployeeDetail().getSalary();
             double newSalary = hireInfo.getSalary();
             employee.getEmployeeDetail().setSalary(newSalary != 0 ? newSalary: currentSalary);
