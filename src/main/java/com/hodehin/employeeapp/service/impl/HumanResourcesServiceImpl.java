@@ -4,6 +4,7 @@ package com.hodehin.employeeapp.service.impl;
 import com.hodehin.employeeapp.dto.EmployeeDto;
 import com.hodehin.employeeapp.dto.HireInfoDto;
 import com.hodehin.employeeapp.enums.Departments;
+import com.hodehin.employeeapp.exception.EmployeeAlreadyHiredException;
 import com.hodehin.employeeapp.exception.EmployeeNotFoundException;
 import com.hodehin.employeeapp.model.Department;
 import com.hodehin.employeeapp.model.Employee;
@@ -31,16 +32,13 @@ public class HumanResourcesServiceImpl implements HumanResourcesService {
         if(employee.getEmployeeDetail() == null ) {
             EmployeeDetail detail = new EmployeeDetail(LocalDate.now(),hireInfo.getSalary());
             employee.setEmployeeDetail(detail);
-        } else {
-            if(employee.getEmployeeDetail().getHired() == null) {
-                employee.getEmployeeDetail().setHired(LocalDate.now());
+            if(hireInfo.getDepartment() != null) {
+                Department department = departmentRepository.findByName(Departments.valueOf(hireInfo.getDepartment().toUpperCase())).orElseThrow();
+                department.addEmployee(employee);
             }
-            double currentSalary = employee.getEmployeeDetail().getSalary();
-            double newSalary = hireInfo.getSalary();
-            employee.getEmployeeDetail().setSalary(newSalary != 0 ? newSalary: currentSalary);
+        } else {
+            throw new EmployeeAlreadyHiredException("Employee hired earlier");
         }
-        Department department = departmentRepository.findByName(Departments.valueOf(hireInfo.getDepartment().toUpperCase()));
-        department.addEmployee(employee);
         employeeRepository.flush();
         return converter.employeeToDto(employee);
     }

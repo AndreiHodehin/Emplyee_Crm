@@ -1,13 +1,12 @@
 package com.hodehin.employeeapp.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hodehin.employeeapp.model.embedded.EmployeeDetail;
 import com.hodehin.employeeapp.model.embedded.EmployeePersonalInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +32,12 @@ public class Employee {
     @JoinColumn(name = "department_id")
     private Department department;
 
-
     @ManyToMany(mappedBy = "employees",fetch = FetchType.LAZY)
     @Setter(AccessLevel.PRIVATE)
     private List<Task> tasks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee")
+    private List<ClockInOutEmployee> checkList = new ArrayList<>();
 
     public void addTask(Task task) {
         addTask(task,false);
@@ -49,4 +50,16 @@ public class Employee {
         task.addEmployee(this,true);
     }
 
+    public boolean canCheckIn() {
+
+        return checkList.isEmpty() || checkList.get(checkList.size() - 1).getTimeOut() != null;
+    }
+
+    public boolean canCheckOut() {
+        if(checkList.isEmpty()) {
+            return false;
+        }
+        ClockInOutEmployee currentRecord = checkList.get(checkList.size()-1);
+        return currentRecord.getTimeIn() != null && currentRecord.getTimeOut() == null;
+    }
 }

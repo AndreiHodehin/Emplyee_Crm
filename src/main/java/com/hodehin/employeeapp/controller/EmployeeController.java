@@ -28,6 +28,7 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDto> addEmployee(@RequestBody EmployeeDto employeeDto) {
         Employee employee = converter.employeeToEntity(employeeDto);
         employeeService.addEmployee(employee);
+        employeeDto.setId(employee.getId());
         return ResponseEntity.ok(employeeDto);
     }
 
@@ -54,4 +55,15 @@ public class EmployeeController {
         return ResponseEntity.ok(null);
     }
 
+    @PostMapping("/{id}/checkIn")
+    public ResponseEntity<Boolean> checkIn(@PathVariable Long id) {
+        boolean accept = employeeService.checkInEmployeeById(id);
+        return ResponseEntity.ok(accept);
+    }
+
+    @PostMapping("/{id}/checkOut")
+    public ResponseEntity<Boolean> checkOut(@PathVariable Long id) {
+        boolean accept = employeeService.checkOutEmployeeById(id);
+        return ResponseEntity.ok(accept);
+    }
 }

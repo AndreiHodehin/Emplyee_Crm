@@ -29,4 +29,9 @@ public class CustomExceptionHandler {
     public ResponseEntity<Object> employeeNotHired(TaskNotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(EmployeeAlreadyHiredException.class)
+    public ResponseEntity<Object> employeeAlreadyHired(EmployeeAlreadyHiredException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

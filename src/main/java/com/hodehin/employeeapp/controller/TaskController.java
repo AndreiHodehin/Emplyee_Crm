@@ -4,6 +4,7 @@ import com.hodehin.employeeapp.dto.TaskDto;
 import com.hodehin.employeeapp.model.Task;
 import com.hodehin.employeeapp.service.TaskService;
 import com.hodehin.employeeapp.utils.Converter;
+import com.sun.jdi.VoidType;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,16 @@ public class TaskController {
     }
 
     @PostMapping
-    public void createTask(@RequestBody TaskDto taskDto) {
+    public ResponseEntity<TaskDto> createTask(@RequestBody TaskDto taskDto) {
         Task task = converter.taskToEntity(taskDto);
         taskService.createTask(task);
+        taskDto.setId(task.getId());
+        return ResponseEntity.ok(taskDto);
     }
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
-
+        return ResponseEntity.ok().build();
     }
     @PutMapping("/{id}")
     public ResponseEntity<TaskDto> updateTask(@RequestBody TaskDto taskDto,

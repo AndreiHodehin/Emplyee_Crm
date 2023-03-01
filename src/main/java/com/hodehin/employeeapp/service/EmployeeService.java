@@ -16,4 +16,8 @@ public interface EmployeeService {
     void changeInfo(EmployeeInfoDto employeeInfoDto, long id);
 
     void setDepartmentToEmpl(Long id, Long departmentId);
+
+    boolean checkInEmployeeById(Long id);
+
+    boolean checkOutEmployeeById(Long id);
 }
