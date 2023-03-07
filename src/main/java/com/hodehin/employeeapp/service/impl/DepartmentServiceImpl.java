@@ -1,12 +1,14 @@
 package com.hodehin.employeeapp.service.impl;
 
-import com.hodehin.employeeapp.dto.DepartmentDto;
+
+import com.hodehin.employeeapp.dto.DepartmentSimpleDto;
 import com.hodehin.employeeapp.exception.DepartmentNotFoundException;
 import com.hodehin.employeeapp.model.Department;
 import com.hodehin.employeeapp.repositiry.DepartmentRepository;
 import com.hodehin.employeeapp.service.DepartmentService;
-import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,4 +53,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void deleteDepartmentById(Long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public Page<DepartmentSimpleDto> getAllPageable(Pageable pageable) {
+        return repository.findAllBy(DepartmentSimpleDto.class, pageable);
+    }
+
+
 }

@@ -6,9 +6,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -34,9 +35,9 @@ public class Employee {
 
     @ManyToMany(mappedBy = "employees",fetch = FetchType.LAZY)
     @Setter(AccessLevel.PRIVATE)
-    private List<Task> tasks = new ArrayList<>();
+    private Set<Task> tasks = new HashSet<>();
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee",fetch = FetchType.LAZY)
     private List<ClockInOutEmployee> checkList = new ArrayList<>();
 
     public void addTask(Task task) {

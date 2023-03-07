@@ -22,8 +22,10 @@ public class Task {
     @Column(nullable = false)
     private String description;
     private LocalDateTime startTime;
+    private LocalDateTime endTime;
     @ColumnDefault(value = "false")
     @Column
+    @Setter(AccessLevel.PRIVATE)
     private Boolean completed;
     private Integer estimate;
     @Setter(AccessLevel.PRIVATE)
@@ -46,4 +48,7 @@ public class Task {
     }
 
 
+    public void completeTask() {
+        this.completed = true;
+    }
 }

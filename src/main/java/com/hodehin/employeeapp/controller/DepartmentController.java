@@ -1,10 +1,13 @@
 package com.hodehin.employeeapp.controller;
 
 import com.hodehin.employeeapp.dto.DepartmentDto;
+import com.hodehin.employeeapp.dto.DepartmentSimpleDto;
 import com.hodehin.employeeapp.model.Department;
 import com.hodehin.employeeapp.service.DepartmentService;
 import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +52,11 @@ public class DepartmentController {
     public ResponseEntity<String> deleteDepartment(@PathVariable Long id) {
         service.deleteDepartmentById(id);
         return ResponseEntity.ok("Deleted successful");
+    }
+
+    @GetMapping("/view")
+    public ResponseEntity<Page<DepartmentSimpleDto>> getAllPageable(Pageable pageable) {
+        Page<DepartmentSimpleDto> dtos = service.getAllPageable(pageable);
+        return ResponseEntity.ok(dtos);
     }
 }

@@ -1,19 +1,18 @@
 package com.hodehin.employeeapp.service.impl;
 
-import com.hodehin.employeeapp.dto.TaskDto;
-import com.hodehin.employeeapp.exception.EmployeeDoThisTaskException;
-import com.hodehin.employeeapp.exception.EmployeeNotFoundException;
-import com.hodehin.employeeapp.exception.EmployeeNotHiredException;
-import com.hodehin.employeeapp.exception.TaskNotFoundException;
+import com.hodehin.employeeapp.dto.TaskSimpleDto;
+import com.hodehin.employeeapp.exception.*;
 import com.hodehin.employeeapp.model.Employee;
 import com.hodehin.employeeapp.model.Task;
 import com.hodehin.employeeapp.repositiry.EmployeeRepository;
 import com.hodehin.employeeapp.repositiry.TaskRepository;
 import com.hodehin.employeeapp.service.TaskService;
-import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,17 +21,16 @@ public class TaskServiceImpl implements TaskService {
 
     private TaskRepository repository;
     private EmployeeRepository employeeRepository;
-    private Converter converter;
+
 
     @Override
-    public TaskDto getById(Long id) {
-        Task task = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
-        return converter.taskToDto(task);
+    public Task getById(Long id) {
+        return repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
     }
 
     @Override
-    public List<TaskDto> getAll() {
-        return repository.findAll().stream().map(task -> converter.taskToDto(task)).toList();
+    public List<Task> getAll() {
+        return repository.findAll();
     }
 
     @Override
@@ -46,11 +44,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDto updateTask(Long id, Task newTask) {
+    public Task updateTask(Long id, Task newTask) {
         Task current = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
-        if(newTask.getCompleted() != null) {
-            current.setCompleted(newTask.getCompleted());
-        }
         if(newTask.getDescription() != null) {
             current.setDescription(newTask.getDescription());
         }
@@ -63,13 +58,16 @@ public class TaskServiceImpl implements TaskService {
         if(newTask.getEmployees() != null) {
             current.getEmployees().addAll(newTask.getEmployees());
         }
-        return converter.taskToDto(current);
+        return current;
     }
 
     @Override
-    public TaskDto setEmplToTask(Long id, Long employeeId) {
+    public Task setEmplToTask(Long id, Long employeeId) {
 
         Task task = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
+        if(task.getStartTime() != null) {
+            throw new TaskAlreadyStartedException("Cannot set employee to task because it in progress");
+        }
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee not present in DB"));
         if(employee.getEmployeeDetail() == null) {
             throw new EmployeeNotHiredException("Employee not hired");
@@ -79,6 +77,34 @@ public class TaskServiceImpl implements TaskService {
         }
         task.getEmployees().add(employee);
         repository.save(task);
-        return converter.taskToDto(task);
+        return task;
+    }
+
+    @Override
+    public boolean startTask(Long id) {
+        Task task = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
+        if(task.getEmployees().isEmpty() || task.getCompleted() || task.getStartTime() != null) {
+            return false;
+        }
+        task.setStartTime(LocalDateTime.now());
+        repository.flush();
+        return true;
+    }
+
+    @Override
+    public boolean finishTask(Long id) {
+        Task task = repository.findById(id).orElseThrow(()-> new TaskNotFoundException("Task not found in DB"));
+        if(task.getCompleted() || task.getStartTime() == null || task.getEndTime() != null) {
+            return false;
+        }
+        task.setEndTime(LocalDateTime.now());
+        task.completeTask();
+        repository.flush();
+        return true;
+    }
+
+    @Override
+    public Page<TaskSimpleDto> getAllTasksPageable(Pageable pageable) {
+        return repository.findAllBy(TaskSimpleDto.class,pageable);
     }
 }

@@ -1,7 +1,8 @@
 package com.hodehin.employeeapp.service.impl;
 
-import com.hodehin.employeeapp.dto.EmployeeDto;
+import com.hodehin.employeeapp.dto.EmployeeCheckListDto;
 import com.hodehin.employeeapp.dto.EmployeeInfoDto;
+import com.hodehin.employeeapp.dto.EmployeeSimpleDto;
 import com.hodehin.employeeapp.exception.DepartmentNotFoundException;
 import com.hodehin.employeeapp.exception.EmployeeNotFoundException;
 import com.hodehin.employeeapp.model.ClockInOutEmployee;
@@ -12,8 +13,9 @@ import com.hodehin.employeeapp.repositiry.CheckInRepository;
 import com.hodehin.employeeapp.repositiry.DepartmentRepository;
 import com.hodehin.employeeapp.repositiry.EmployeeRepository;
 import com.hodehin.employeeapp.service.EmployeeService;
-import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,12 +28,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     private DepartmentRepository departmentRepository;
     private CheckInRepository checkInRepository;
-    private Converter converter;
 
     @Override
-    public EmployeeDto getEmployee(long id) {
-        Employee employee =  employeeRepository.findById(id).orElseThrow(EmployeeNotFoundException::new);
-        return converter.employeeToDto(employee);
+    public Employee getEmployee(long id) {
+        return employeeRepository.findById(id).orElseThrow(EmployeeNotFoundException::new);
     }
 
     @Override
@@ -40,8 +40,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDto> getAllEmployee() {
-        return employeeRepository.findAll().stream().map(employee -> converter.employeeToDto(employee)).toList();
+    public List<Employee> getAllEmployee() {
+
+        return employeeRepository.findAll();
     }
 
     @Override
@@ -101,6 +102,17 @@ public class EmployeeServiceImpl implements EmployeeService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Page<EmployeeSimpleDto> getAllEmployeePageable(Pageable pageable) {
+        return employeeRepository.findAllBy(EmployeeSimpleDto.class,pageable);
+
+    }
+
+    @Override
+    public Page<EmployeeCheckListDto> getEmployeeCheclListInfo(Pageable pageable) {
+        return employeeRepository.findAllCheckListInfo(pageable);
     }
 
 

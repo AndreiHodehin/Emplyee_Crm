@@ -25,7 +25,7 @@ public class Converter {
                 , employee.getPersonalInfo() == null ? null : employee.getPersonalInfo().getPhoneNumber()
                 , employee.getEmployeeDetail() == null ? null : employee.getEmployeeDetail().getHired()
                 , employee.getEmployeeDetail() == null ? 0 : employee.getEmployeeDetail().getSalary()
-                , employee.getTasks().stream().map(this::taskToDto).toList());
+                , employee.getTasks().stream().map(Task::getDescription).toList());
     }
     public Employee employeeToEntity(EmployeeDto employeeDTO) {
         Employee employee = new Employee();
@@ -45,6 +45,7 @@ public class Converter {
         return  new TaskDto(task.getId(),
                 task.getDescription(),
                 task.getStartTime(),
+                task.getEndTime(),
                 task.getCompleted(),
                 task.getEstimate(),
                 task.getEmployees().stream().map(Employee::getId).toList());
@@ -55,7 +56,7 @@ public class Converter {
         task.setDescription(taskDto.getDescription());
         task.setEstimate(taskDto.getEstimate());
         task.setStartTime(taskDto.getStartTime());
-        task.setCompleted(taskDto.getCompleted());
+        task.setEndTime(taskDto.getEndTime());
         return task;
     }
 

@@ -1,7 +1,6 @@
 package com.hodehin.employeeapp.service.impl;
 
 
-import com.hodehin.employeeapp.dto.EmployeeDto;
 import com.hodehin.employeeapp.dto.HireInfoDto;
 import com.hodehin.employeeapp.enums.Departments;
 import com.hodehin.employeeapp.exception.EmployeeAlreadyHiredException;
@@ -12,7 +11,6 @@ import com.hodehin.employeeapp.model.embedded.EmployeeDetail;
 import com.hodehin.employeeapp.repositiry.DepartmentRepository;
 import com.hodehin.employeeapp.repositiry.EmployeeRepository;
 import com.hodehin.employeeapp.service.HumanResourcesService;
-import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +21,10 @@ import java.time.LocalDate;
 public class HumanResourcesServiceImpl implements HumanResourcesService {
 
     private final EmployeeRepository employeeRepository;
-    private final Converter converter;
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public EmployeeDto hireEmployee(long id, HireInfoDto hireInfo) {
+    public Employee hireEmployee(long id, HireInfoDto hireInfo) {
         Employee employee = employeeRepository.findById(id).orElseThrow(()-> new EmployeeNotFoundException("Employee doesnt exists in database"));
         if(employee.getEmployeeDetail() == null ) {
             EmployeeDetail detail = new EmployeeDetail(LocalDate.now(),hireInfo.getSalary());
@@ -40,18 +37,18 @@ public class HumanResourcesServiceImpl implements HumanResourcesService {
             throw new EmployeeAlreadyHiredException("Employee hired earlier");
         }
         employeeRepository.flush();
-        return converter.employeeToDto(employee);
+        return employee;
     }
 
     @Override
-    public EmployeeDto suspendEmployee(long id) {
+    public Employee suspendEmployee(long id) {
         Employee employee = employeeRepository.findById(id).orElseThrow(()-> new EmployeeNotFoundException("Employee doesnt exists in database"));
         if(employee.getEmployeeDetail() != null) {
             employee.setEmployeeDetail(null);
             employee.setDepartment(null);
         }
         employeeRepository.flush();
-        return converter.employeeToDto(employee);
+        return employee;
     }
 
 

@@ -1,11 +1,15 @@
 package com.hodehin.employeeapp.controller;
 
+import com.hodehin.employeeapp.dto.EmployeeCheckListDto;
 import com.hodehin.employeeapp.dto.EmployeeDto;
 import com.hodehin.employeeapp.dto.EmployeeInfoDto;
+import com.hodehin.employeeapp.dto.EmployeeSimpleDto;
 import com.hodehin.employeeapp.model.Employee;
 import com.hodehin.employeeapp.service.EmployeeService;
 import com.hodehin.employeeapp.utils.Converter;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +24,8 @@ public class EmployeeController {
     private final Converter converter;
     @GetMapping(value = "/{id}")
     public ResponseEntity<EmployeeDto> getEmployee(@PathVariable long id) {
-        EmployeeDto employee = employeeService.getEmployee(id);
-        return ResponseEntity.ok(employee);
+        Employee employee = employeeService.getEmployee(id);
+        return ResponseEntity.ok(converter.employeeToDto(employee));
     }
 
     @PostMapping
@@ -41,14 +45,16 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<List<EmployeeDto>> getAllEmployee() {
-        List<EmployeeDto> employees = employeeService.getAllEmployee();
-        return ResponseEntity.ok(employees);
+        List<Employee> employees = employeeService.getAllEmployee();
+        return ResponseEntity.ok(employees.stream().map(converter::employeeToDto).toList());
     }
+
     @PostMapping("/{id}")
     public ResponseEntity<Object> updateInfo(@PathVariable long id, @RequestBody EmployeeInfoDto employeeInfoDto) {
         employeeService.changeInfo(employeeInfoDto, id);
         return ResponseEntity.ok(null);
     }
+
     @PostMapping("/{id}/department/{departmentId}")
     public ResponseEntity<Object> changeDepartment(@PathVariable Long id, @PathVariable Long departmentId) {
         employeeService.setDepartmentToEmpl(id,departmentId);
@@ -65,5 +71,19 @@ public class EmployeeController {
     public ResponseEntity<Boolean> checkOut(@PathVariable Long id) {
         boolean accept = employeeService.checkOutEmployeeById(id);
         return ResponseEntity.ok(accept);
+    }
+
+
+    @GetMapping ("/view")
+    public ResponseEntity<Page<EmployeeSimpleDto>> getAllEmployeeWithOrderAndPage(Pageable pageable) {
+        Page<EmployeeSimpleDto> employees = employeeService.getAllEmployeePageable(pageable);
+        return ResponseEntity.ok(employees);
+    }
+
+
+    @GetMapping("/checkList")
+    public ResponseEntity<Page<EmployeeCheckListDto>> getAllEmployeesCheckList(Pageable pageable) {
+        Page<EmployeeCheckListDto> employees = employeeService.getEmployeeCheclListInfo(pageable);
+        return ResponseEntity.ok(employees);
     }
 }

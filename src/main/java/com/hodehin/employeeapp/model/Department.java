@@ -1,6 +1,5 @@
 package com.hodehin.employeeapp.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hodehin.employeeapp.enums.Departments;
 import jakarta.persistence.*;
 
