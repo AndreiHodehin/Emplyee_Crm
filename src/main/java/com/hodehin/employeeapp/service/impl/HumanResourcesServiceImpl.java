@@ -41,14 +41,14 @@ public class HumanResourcesServiceImpl implements HumanResourcesService {
     }
 
     @Override
-    public Employee suspendEmployee(long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(()-> new EmployeeNotFoundException("Employee doesnt exists in database"));
+    public void suspendEmployee(long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(()-> new EmployeeNotFoundException("Employee doesnt exists in database"));
         if(employee.getEmployeeDetail() != null) {
             employee.setEmployeeDetail(null);
             employee.setDepartment(null);
         }
         employeeRepository.flush();
-        return employee;
     }
 
 

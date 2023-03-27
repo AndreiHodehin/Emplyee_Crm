@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "description")
 @RequiredArgsConstructor
 public class Task {
     @Id

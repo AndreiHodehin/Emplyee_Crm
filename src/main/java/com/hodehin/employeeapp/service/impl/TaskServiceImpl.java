@@ -55,6 +55,9 @@ public class TaskServiceImpl implements TaskService {
         if(newTask.getStartTime() != null) {
             current.setStartTime(newTask.getStartTime());
         }
+        if(newTask.getEndTime() != null) {
+            current.setEndTime(newTask.getEndTime());
+        }
         if(newTask.getEmployees() != null) {
             current.getEmployees().addAll(newTask.getEmployees());
         }
@@ -73,7 +76,7 @@ public class TaskServiceImpl implements TaskService {
             throw new EmployeeNotHiredException("Employee not hired");
         }
         if(task.getEmployees().contains(employee)){
-            throw new EmployeeDoThisTaskException("Employee already setted on this task");
+            throw new EmployeeDoThisTaskException("Employee already serted on this task");
         }
         task.getEmployees().add(employee);
         repository.save(task);
@@ -87,7 +90,6 @@ public class TaskServiceImpl implements TaskService {
             return false;
         }
         task.setStartTime(LocalDateTime.now());
-        repository.flush();
         return true;
     }
 
@@ -99,7 +101,6 @@ public class TaskServiceImpl implements TaskService {
         }
         task.setEndTime(LocalDateTime.now());
         task.completeTask();
-        repository.flush();
         return true;
     }
 

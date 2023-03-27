@@ -8,6 +8,5 @@ import com.hodehin.employeeapp.model.Employee;
 public interface HumanResourcesService {
 
     Employee hireEmployee(long id, HireInfoDto hireInfo) ;
-
-    Employee suspendEmployee(long id);
+    void suspendEmployee(long id);
 }

@@ -25,8 +25,8 @@ public class HRController {
     }
 
     @PutMapping("/{id}/suspend")
-    public ResponseEntity<EmployeeDto> suspendEmployee(@PathVariable long id) {
-        Employee employee = humanResourcesService.suspendEmployee(id);
-        return ResponseEntity.ok(converter.employeeToDto(employee));
+    public ResponseEntity<Void> suspendEmployee(@PathVariable long id) {
+        humanResourcesService.suspendEmployee(id);
+        return ResponseEntity.ok().build();
     }
 }

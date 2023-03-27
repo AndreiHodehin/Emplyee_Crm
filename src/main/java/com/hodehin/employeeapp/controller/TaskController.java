@@ -26,10 +26,16 @@ public class TaskController {
         return ResponseEntity.ok(converter.taskToDto(task));
     }
     @GetMapping
-    private ResponseEntity<List<Task>> getAll(){
-        return ResponseEntity.ok(taskService.getAll());
+    private ResponseEntity<List<TaskDto>> getAll(){
+        List<Task> tasks = taskService.getAll();
+        return ResponseEntity.ok(tasks.stream().map(converter::taskToDto).toList());
     }
 
+    @GetMapping("/view")
+    private ResponseEntity<Page<TaskSimpleDto>> getTaskPageable(Pageable pageable) {
+        Page<TaskSimpleDto> taskDtos = taskService.getAllTasksPageable(pageable);
+        return ResponseEntity.ok(taskDtos);
+    }
     @PostMapping
     public ResponseEntity<TaskDto> createTask(@RequestBody TaskDto taskDto) {
         Task task = converter.taskToEntity(taskDto);
@@ -66,9 +72,4 @@ public class TaskController {
         return ResponseEntity.ok(successful);
     }
 
-    @GetMapping("/view")
-    private ResponseEntity<Page<TaskSimpleDto>> getSimple(Pageable pageable) {
-        Page<TaskSimpleDto> dtos = taskService.getAllTasksPageable(pageable);
-        return ResponseEntity.ok(dtos);
-    }
 }

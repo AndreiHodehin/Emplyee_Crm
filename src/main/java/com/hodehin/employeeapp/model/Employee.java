@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "firstName")
 @RequiredArgsConstructor
 public class Employee {
 

@@ -49,25 +49,25 @@ public class EmployeeController {
         return ResponseEntity.ok(employees.stream().map(converter::employeeToDto).toList());
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> updateInfo(@PathVariable long id, @RequestBody EmployeeInfoDto employeeInfoDto) {
         employeeService.changeInfo(employeeInfoDto, id);
         return ResponseEntity.ok(null);
     }
 
-    @PostMapping("/{id}/department/{departmentId}")
+    @PutMapping("/{id}/department/{departmentId}")
     public ResponseEntity<Object> changeDepartment(@PathVariable Long id, @PathVariable Long departmentId) {
         employeeService.setDepartmentToEmpl(id,departmentId);
         return ResponseEntity.ok(null);
     }
 
-    @PostMapping("/{id}/checkIn")
+    @PutMapping("/{id}/checkIn")
     public ResponseEntity<Boolean> checkIn(@PathVariable Long id) {
         boolean accept = employeeService.checkInEmployeeById(id);
         return ResponseEntity.ok(accept);
     }
 
-    @PostMapping("/{id}/checkOut")
+    @PutMapping("/{id}/checkOut")
     public ResponseEntity<Boolean> checkOut(@PathVariable Long id) {
         boolean accept = employeeService.checkOutEmployeeById(id);
         return ResponseEntity.ok(accept);
